@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gocarina/gocsv"
@@ -13,7 +12,6 @@ import (
 type StatsClient struct {
 	uri    string
 	client *http.Client
-	Up     bool
 }
 
 func (h *StatsClient) Fetch() (Services, error) {
@@ -21,17 +19,15 @@ func (h *StatsClient) Fetch() (Services, error) {
 
 	resp, err := h.client.Get(h.uri)
 	if err != nil {
-		h.Up = false
-		return services, err
+		return services, fmt.Errorf("fetch errror: %s", err)
 	}
 
+	allStats := []*Stat{}
 	reader := csv.NewReader(resp.Body)
 	reader.TrailingComma = true
-
-	allStats := []*Stat{}
 	err = gocsv.UnmarshalCSV(reader, &allStats)
 	if err != nil {
-		panic(err)
+		return services, fmt.Errorf("error reading csv: %s", err)
 	}
 
 	for _, s := range allStats {
