@@ -10,16 +10,16 @@ import (
 	"github.com/gocarina/gocsv"
 )
 
-type HAProxyStats struct {
-	URI    string
+type StatsClient struct {
+	uri    string
 	client *http.Client
 	Up     bool
-	Fields []string
 }
 
-func (h *HAProxyStats) Poll() (Services, error) {
+func (h *StatsClient) Fetch() (Services, error) {
 	var services Services
-	resp, err := h.client.Get(h.URI)
+
+	resp, err := h.client.Get(h.uri)
 	if err != nil {
 		h.Up = false
 		return services, err
@@ -43,67 +43,14 @@ func (h *HAProxyStats) Poll() (Services, error) {
 		default:
 			services.Listeners = append(services.Listeners, s)
 		}
-
-		fmt.Println(s.SvName)
 	}
-	fmt.Println(len(services.Frontends))
-	fmt.Println(len(services.Backends))
-	fmt.Println(len(services.Listeners))
 
 	return services, nil
-
-	//	for {
-	//		row, err := reader.Read()
-	//		switch err {
-	//		case nil:
-	//		case io.EOF:
-	//			return
-	//		case err.(*csv.ParseError):
-	//			fmt.Printf("csv parse error: %v", err)
-	//			return
-	//		default:
-	//			fmt.Printf("unexpected error: %v", err)
-	//			return
-	//		}
-
-	// read metric names from header row
-	//		if len(h.Fields) < 1 {
-	//			h.readHeader(row)
-	//			continue
-	//		}
-	//
-	//		// zip remaining columns with fieldnames
-	//		item := make(map[string]string)
-	//		for idx, col := range row {
-	//			item[h.Fields[idx]] = col
-	//		}
-	//
-	//		j, err := json.Marshal(item)
-	//		j, err := json.Unmarshal(item)
-	//		if err != nil {
-	//			panic(err)
-	//		}
-	//		fmt.Println(string(j))
-	//	}
 }
 
-func (h *HAProxyStats) Run() {
-	go func() {
-		h.Poll()
-		time.Sleep(5 * time.Second)
-	}()
-}
-
-func (h *HAProxyStats) readHeader(row []string) {
-	r := strings.NewReplacer("#", "", " ", "")
-	for _, col := range row {
-		h.Fields = append(h.Fields, r.Replace(col))
-	}
-}
-
-func New(hostAddr string, timeout time.Duration) *HAProxyStats {
-	return &HAProxyStats{
-		URI: hostAddr + "/;csv;norefresh",
+func New(hostAddr string, timeout time.Duration) *StatsClient {
+	return &StatsClient{
+		uri: hostAddr + "/;csv;norefresh",
 		client: &http.Client{
 			Timeout: timeout,
 		},
