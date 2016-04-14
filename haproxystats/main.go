@@ -11,11 +11,10 @@ import (
 )
 
 type HAProxyStats struct {
-	URI      string
-	interval time.Duration
-	client   *http.Client
-	Up       bool
-	Fields   []string
+	URI    string
+	client *http.Client
+	Up     bool
+	Fields []string
 }
 
 func (h *HAProxyStats) Poll() (Services, error) {
@@ -91,7 +90,7 @@ func (h *HAProxyStats) Poll() (Services, error) {
 func (h *HAProxyStats) Run() {
 	go func() {
 		h.Poll()
-		time.Sleep(h.interval * time.Second)
+		time.Sleep(5 * time.Second)
 	}()
 }
 
@@ -102,10 +101,9 @@ func (h *HAProxyStats) readHeader(row []string) {
 	}
 }
 
-func NewHAProxyStats(hostAddr string, interval, timeout time.Duration) *HAProxyStats {
+func New(hostAddr string, timeout time.Duration) *HAProxyStats {
 	return &HAProxyStats{
-		URI:      hostAddr + "/;csv;norefresh",
-		interval: interval,
+		URI: hostAddr + "/;csv;norefresh",
 		client: &http.Client{
 			Timeout: timeout,
 		},
