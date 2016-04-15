@@ -17,10 +17,16 @@ const (
 )
 
 type HAProxyClient struct {
+	Addr string
 	conn net.Conn
 }
 
 func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
+	err := h.dial()
+	if err != nil {
+		return nil, err
+	}
+
 	done := make(chan bool)
 	result := bytes.NewBuffer(nil)
 
@@ -40,10 +46,10 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 		case <-done:
 		}
 	}
+	h.conn.Close()
 
-	fmt.Println(result.String())
 	if strings.HasPrefix(result.String(), "Unknown command") {
-		return nil, fmt.Errorf("Uknown command: %s", cmd)
+		return nil, fmt.Errorf("Unknown command: %s", cmd)
 	}
 
 	return result, nil
@@ -77,27 +83,24 @@ func (h *HAProxyClient) Stats() (services Services, err error) {
 	return services, nil
 }
 
-func New(addr string) (*HAProxyClient, error) {
-	var err error
-	client := &HAProxyClient{}
-
-	if strings.HasPrefix(addr, socketSchema) {
-		client.conn, err = net.Dial("unix", strings.Replace(addr, socketSchema, "", 1))
-		if err != nil {
-			panic(err)
-		}
+func (h *HAProxyClient) dial() (err error) {
+	switch h.schema() {
+	case "unix":
+		h.conn, err = net.Dial("unix", strings.Replace(h.Addr, socketSchema, "", 1))
+	case "tcp":
+		h.conn, err = net.Dial("tcp", strings.Replace(h.Addr, tcpSchema, "", 1))
+	default:
+		return fmt.Errorf("unknown schema")
 	}
+	return err
+}
 
-	if strings.HasPrefix(addr, tcpSchema) {
-		client.conn, err = net.Dial("tcp", strings.Replace(addr, tcpSchema, "", 1))
-		if err != nil {
-			panic(err)
-		}
+func (h *HAProxyClient) schema() string {
+	if strings.HasPrefix(h.Addr, socketSchema) {
+		return "socket"
 	}
-
-	if client.conn == nil {
-		return nil, fmt.Errorf("unknown schema")
+	if strings.HasPrefix(h.Addr, tcpSchema) {
+		return "tcp"
 	}
-
-	return client, nil
+	return ""
 }
