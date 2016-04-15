@@ -20,7 +20,7 @@ type HAProxyClient struct {
 	conn net.Conn
 }
 
-func (h *HAProxyClient) RunCommand(cmd string) *bytes.Buffer {
+func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	done := make(chan bool)
 	result := bytes.NewBuffer(nil)
 
@@ -41,11 +41,19 @@ func (h *HAProxyClient) RunCommand(cmd string) *bytes.Buffer {
 		}
 	}
 
-	return result
+	fmt.Println(result.String())
+	if strings.HasPrefix(result.String(), "Unknown command") {
+		return nil, fmt.Errorf("Uknown command: %s", cmd)
+	}
+
+	return result, nil
 }
 
 func (h *HAProxyClient) Stats() (services Services, err error) {
-	res := h.RunCommand("show stat")
+	res, err := h.RunCommand("show stat")
+	if err != nil {
+		return services, err
+	}
 
 	allStats := []*Stat{}
 	reader := csv.NewReader(res)
