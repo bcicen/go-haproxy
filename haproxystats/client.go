@@ -18,9 +18,6 @@ const (
 
 type HAProxyClient struct {
 	conn net.Conn
-	//	connType   string
-	//	tcpConn    *net.TCPConn
-	//	socketConn *net.UnixConn
 }
 
 func (h *HAProxyClient) RunCommand(cmd string) *bytes.Buffer {
