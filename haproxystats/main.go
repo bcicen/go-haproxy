@@ -1,29 +1,57 @@
 package haproxystats
 
 import (
+	"bytes"
 	"encoding/csv"
 	"fmt"
-	"net/http"
-	"time"
+	"io"
+	"net"
+	"strings"
 
 	"github.com/gocarina/gocsv"
 )
 
-type StatsClient struct {
-	uri    string
-	client *http.Client
+const (
+	socketSchema = "unix:///"
+	tcpSchema    = "tcp://"
+)
+
+type HAProxyClient struct {
+	conn net.Conn
+	//	connType   string
+	//	tcpConn    *net.TCPConn
+	//	socketConn *net.UnixConn
 }
 
-func (h *StatsClient) Fetch() (Services, error) {
-	var services Services
+func (h *HAProxyClient) RunCommand(cmd string) *bytes.Buffer {
+	done := make(chan bool)
+	result := bytes.NewBuffer(nil)
 
-	resp, err := h.client.Get(h.uri)
-	if err != nil {
-		return services, fmt.Errorf("fetch errror: %s", err)
+	go func() {
+		io.Copy(result, h.conn)
+		defer func() { done <- true }()
+	}()
+
+	go func() {
+		h.conn.Write([]byte(cmd + "\n"))
+		defer func() { done <- true }()
+	}()
+
+	// Wait for both io streams to close
+	for i := 0; i < 2; i++ {
+		select {
+		case <-done:
+		}
 	}
 
+	return result
+}
+
+func (h *HAProxyClient) Stats() (services Services, err error) {
+	res := h.RunCommand("show stat")
+
 	allStats := []*Stat{}
-	reader := csv.NewReader(resp.Body)
+	reader := csv.NewReader(res)
 	reader.TrailingComma = true
 	err = gocsv.UnmarshalCSV(reader, &allStats)
 	if err != nil {
@@ -44,11 +72,27 @@ func (h *StatsClient) Fetch() (Services, error) {
 	return services, nil
 }
 
-func New(hostAddr string, timeout time.Duration) *StatsClient {
-	return &StatsClient{
-		uri: hostAddr + "/;csv;norefresh",
-		client: &http.Client{
-			Timeout: timeout,
-		},
+func New(addr string) (*HAProxyClient, error) {
+	var err error
+	client := &HAProxyClient{}
+
+	if strings.HasPrefix(addr, socketSchema) {
+		client.conn, err = net.Dial("unix", strings.Replace(addr, socketSchema, "", 1))
+		if err != nil {
+			panic(err)
+		}
 	}
+
+	if strings.HasPrefix(addr, tcpSchema) {
+		client.conn, err = net.Dial("tcp", strings.Replace(addr, tcpSchema, "", 1))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if client.conn == nil {
+		return nil, fmt.Errorf("unknown schema")
+	}
+
+	return client, nil
 }
