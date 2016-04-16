@@ -1,4 +1,4 @@
-package haproxystats
+package haproxy
 
 type Services struct {
 	Frontends []*Stat

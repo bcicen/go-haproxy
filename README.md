@@ -1,2 +1,2 @@
-# go-haproxy-stats
-Go library for fetching and parsing realtime stats from HAProxy
+# go-haproxy
+Go library for managing and communicating with HAProxy 

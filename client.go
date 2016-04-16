@@ -1,4 +1,4 @@
-package haproxystats
+package haproxy
 
 import (
 	"bytes"
