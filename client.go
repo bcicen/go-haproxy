@@ -1,3 +1,4 @@
+// Package haproxy provides a minimal client for communicating with, and issuing commands to, HAproxy over a network or file socket.
 package haproxy
 
 import (
@@ -16,11 +17,13 @@ const (
 	tcpSchema    = "tcp://"
 )
 
+// HAProxyClient is the main structure of the library.
 type HAProxyClient struct {
 	Addr string
 	conn net.Conn
 }
 
+// Entrypoint to the client. Sends an arbitray command string to HAProxy.
 func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	err := h.dial()
 	if err != nil {
@@ -55,6 +58,7 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	return result, nil
 }
 
+// Equivalent to HAProxy "show stat" command.
 func (h *HAProxyClient) Stats() (services Services, err error) {
 	res, err := h.RunCommand("show stat")
 	if err != nil {
