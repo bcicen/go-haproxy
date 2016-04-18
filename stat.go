@@ -46,22 +46,22 @@ type Stat struct {
 	CheckStatus   string `csv:"check_status"`
 	CheckCode     uint64 `csv:"check_code"`
 	CheckDuration uint64 `csv:"check_duration"`
-	Hrsp_1xx      uint64 `csv:"hrsp_1xx"`
-	Hrsp_2xx      uint64 `csv:"hrsp_2xx"`
-	Hrsp_3xx      uint64 `csv:"hrsp_3xx"`
-	Hrsp_4xx      uint64 `csv:"hrsp_4xx"`
-	Hrsp_5xx      uint64 `csv:"hrsp_5xx"`
-	Hrsp_other    uint64 `csv:"hrsp_other"`
+	Hrsp1xx       uint64 `csv:"hrsp_1xx"`
+	Hrsp2xx       uint64 `csv:"hrsp_2xx"`
+	Hrsp3xx       uint64 `csv:"hrsp_3xx"`
+	Hrsp4xx       uint64 `csv:"hrsp_4xx"`
+	Hrsp5xx       uint64 `csv:"hrsp_5xx"`
+	HrspOther     uint64 `csv:"hrsp_other"`
 	Hanafail      uint64 `csv:"hanafail"`
 	ReqRate       uint64 `csv:"req_rate"`
 	ReqRateMax    uint64 `csv:"req_rate_max"`
 	ReqTot        uint64 `csv:"req_tot"`
-	Cli_abrt      uint64 `csv:"cli_abrt"`
-	Srv_abrt      uint64 `csv:"srv_abrt"`
-	Comp_in       uint64 `csv:"comp_in"`
-	Comp_out      uint64 `csv:"comp_out"`
-	Comp_byp      uint64 `csv:"comp_byp"`
-	Comp_rsp      uint64 `csv:"comp_rsp"`
+	CliAbrt       uint64 `csv:"cli_abrt"`
+	SrvAbrt       uint64 `csv:"srv_abrt"`
+	CompIn        uint64 `csv:"comp_in"`
+	CompOut       uint64 `csv:"comp_out"`
+	CompByp       uint64 `csv:"comp_byp"`
+	CompRsp       uint64 `csv:"comp_rsp"`
 	LastSess      int64  `csv:"lastsess"`
 	LastChk       string `csv:"last_chk"`
 	LastAgt       uint64 `csv:"last_agt"`
