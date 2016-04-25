@@ -1,10 +1,11 @@
 package haproxy
 
-type Services struct {
-	Frontends []*Stat
-	Backends  []*Stat
-	Listeners []*Stat
-}
+import (
+	"encoding/csv"
+	"fmt"
+
+	"github.com/gocarina/gocsv"
+)
 
 type Stat struct {
 	PxName        string `csv:"# pxname"`
@@ -69,4 +70,32 @@ type Stat struct {
 	Ctime         uint64 `csv:"ctime"`
 	Rtime         uint64 `csv:"rtime"`
 	Ttime         uint64 `csv:"ttime"`
+}
+
+// Equivalent to HAProxy "show stat" command.
+func (h *HAProxyClient) Stats() (stats []*Stat, err error) {
+	res, err := h.RunCommand("show stat")
+	if err != nil {
+		return nil, err
+	}
+
+	reader := csv.NewReader(res)
+	reader.TrailingComma = true
+	err = gocsv.UnmarshalCSV(reader, &stats)
+	if err != nil {
+		return nil, fmt.Errorf("error reading csv: %s", err)
+	}
+
+	//	for _, s := range allStats {
+	//		switch s.SvName {
+	//		case "FRONTEND":
+	//			services.Frontends = append(services.Frontends, s)
+	//		case "BACKEND":
+	//			services.Backends = append(services.Backends, s)
+	//		default:
+	//			services.Listeners = append(services.Listeners, s)
+	//		}
+	//	}
+
+	return stats, nil
 }

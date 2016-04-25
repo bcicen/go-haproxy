@@ -3,13 +3,10 @@ package haproxy
 
 import (
 	"bytes"
-	"encoding/csv"
 	"fmt"
 	"io"
 	"net"
 	"strings"
-
-	"github.com/gocarina/gocsv"
 )
 
 const (
@@ -56,35 +53,6 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	}
 
 	return result, nil
-}
-
-// Equivalent to HAProxy "show stat" command.
-func (h *HAProxyClient) Stats() (services Services, err error) {
-	res, err := h.RunCommand("show stat")
-	if err != nil {
-		return services, err
-	}
-
-	allStats := []*Stat{}
-	reader := csv.NewReader(res)
-	reader.TrailingComma = true
-	err = gocsv.UnmarshalCSV(reader, &allStats)
-	if err != nil {
-		return services, fmt.Errorf("error reading csv: %s", err)
-	}
-
-	for _, s := range allStats {
-		switch s.SvName {
-		case "FRONTEND":
-			services.Frontends = append(services.Frontends, s)
-		case "BACKEND":
-			services.Backends = append(services.Backends, s)
-		default:
-			services.Listeners = append(services.Listeners, s)
-		}
-	}
-
-	return services, nil
 }
 
 func (h *HAProxyClient) dial() (err error) {
