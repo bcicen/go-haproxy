@@ -14,8 +14,8 @@ client := &haproxy.HAProxyClient{
 
 Fetch results for a built in command(currently only supports `stats`):
 ```go
-services, err := client.Stats()
-for _, i := range services.Listeners {
+stats, err := client.Stats()
+for _, i := range stats {
 	fmt.Printf("%s: %s\n", i.SvName, i.Status)
 }
 ```
