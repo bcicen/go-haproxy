@@ -85,6 +85,11 @@ func getFieldInfos(rType reflect.Type) structFields {
 	return fieldMap
 }
 
+func trim(s string) string {
+	re := regexp.MustCompile("(\\S+|\\S+)")
+	return strings.Join(re.FindAllString(s, -1), " ")
+}
+
 func Unmarshal(in io.Reader, out interface{}) error {
 	outValue := reflect.ValueOf(out)
 	if outValue.Kind() == reflect.Ptr {
@@ -93,15 +98,12 @@ func Unmarshal(in io.Reader, out interface{}) error {
 	outType := outValue.Type()
 
 	fields := getstructFields(outType)
-	//	for _, i := range fields {
-	//		fmt.Printf("%s: %s\n", i.Name, i.Key)
-	//	}
 
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), ":") {
 			s := strings.Split(scanner.Text(), ":")
-			k, v := s[0], s[1]
+			k, v := trim(s[0]), trim(s[1])
 			if meta, ok := fields[k]; ok {
 				field := outValue.FieldByName(meta.Name)
 				setField(field, v)
