@@ -11,20 +11,21 @@ import (
 )
 
 const (
-	tagLabel = "mapstruct"
+	tagLabel = "kv"
+	kvDelim  = ":"
 )
 
-type structFields map[string]fieldMeta
+type structFields map[string]FieldMeta
 
-type fieldMeta struct {
+type FieldMeta struct {
 	Key        string
 	Name       string
 	OmitAlways bool
 	OmitEmpty  bool
 }
 
-func readField(field reflect.StructField) (meta fieldMeta) {
-	meta = fieldMeta{
+func newFieldMeta(field reflect.StructField) (meta FieldMeta) {
+	meta = FieldMeta{
 		Name: field.Name,
 	}
 	fieldTags := strings.Split(field.Tag.Get(tagLabel), ",")
@@ -33,7 +34,6 @@ func readField(field reflect.StructField) (meta fieldMeta) {
 			meta.OmitAlways = true
 			return meta
 		}
-
 		if tag == "omitempty" {
 			meta.OmitEmpty = true
 		} else if tag != "" {
@@ -42,39 +42,41 @@ func readField(field reflect.StructField) (meta fieldMeta) {
 			meta.Key = field.Name
 		}
 	}
-
 	return meta
 }
 
+var err error
 var structMap = make(map[reflect.Type]structFields)
 var structMapMutex sync.RWMutex
 
-func getstructFields(rType reflect.Type) (stInfo structFields) {
+func getStructFields(rType reflect.Type) (structFields, error) {
 	structMapMutex.RLock()
 	stInfo, ok := structMap[rType]
 	if !ok {
-		stInfo = getFieldInfos(rType)
+		stInfo, err = newStructFields(rType)
+		if err != nil {
+			return nil, err
+		}
 		structMap[rType] = stInfo
 	}
 	structMapMutex.RUnlock()
-	return stInfo
+	return stInfo, nil
 }
 
-func getFieldInfos(rType reflect.Type) structFields {
+func newStructFields(rType reflect.Type) (structFields, error) {
 	fieldsCount := rType.NumField()
 	fieldMap := make(structFields)
 
 	for i := 0; i < fieldsCount; i++ {
 		field := rType.Field(i)
-		meta := readField(field)
+		meta := newFieldMeta(field)
 
 		if field.PkgPath != "" {
 			continue
 		}
 
-		// if the field is an embedded struct, create a fieldInfo for each of its fields
 		if field.Anonymous && field.Type.Kind() == reflect.Struct {
-			panic(fmt.Errorf("embedded structs not supported"))
+			return nil, fmt.Errorf("embedded structs not supported")
 		}
 
 		if !meta.OmitAlways {
@@ -82,7 +84,7 @@ func getFieldInfos(rType reflect.Type) structFields {
 		}
 	}
 
-	return fieldMap
+	return fieldMap, nil
 }
 
 func trim(s string) string {
@@ -95,14 +97,19 @@ func Unmarshal(in io.Reader, out interface{}) error {
 	if outValue.Kind() == reflect.Ptr {
 		outValue = outValue.Elem()
 	}
-	outType := outValue.Type()
 
-	fields := getstructFields(outType)
+	fields, err := getStructFields(outValue.Type())
+	if fields == nil {
+		panic(err)
+	}
+	if err != nil {
+		return err
+	}
 
 	scanner := bufio.NewScanner(in)
 	for scanner.Scan() {
-		if strings.Contains(scanner.Text(), ":") {
-			s := strings.Split(scanner.Text(), ":")
+		if strings.Contains(scanner.Text(), kvDelim) {
+			s := strings.Split(scanner.Text(), kvDelim)
 			k, v := trim(s[0]), trim(s[1])
 			if meta, ok := fields[k]; ok {
 				field := outValue.FieldByName(meta.Name)
