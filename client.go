@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	socketSchema = "unix:///"
+	socketSchema = "unix://"
 	tcpSchema    = "tcp://"
 )
 
@@ -57,7 +57,7 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 
 func (h *HAProxyClient) dial() (err error) {
 	switch h.schema() {
-	case "unix":
+	case "socket":
 		h.conn, err = net.Dial("unix", strings.Replace(h.Addr, socketSchema, "", 1))
 	case "tcp":
 		h.conn, err = net.Dial("tcp", strings.Replace(h.Addr, tcpSchema, "", 1))
