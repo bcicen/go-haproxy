@@ -51,8 +51,8 @@ type Info struct {
 	Tasks                      uint64 `kv:"Tasks"`
 	RunQueue                   uint64 `kv:"Run_queue"`
 	IdlePct                    uint64 `kv:"Idle_pct"`
-	node                       string `kv:"node"`
-	description                string `kv:"description"`
+	Node                       string `kv:"node"`
+	Description                string `kv:"description"`
 }
 
 // Equivalent to HAProxy "show info" command.
