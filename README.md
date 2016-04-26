@@ -1,7 +1,7 @@
 [![GoDoc](https://godoc.org/github.com/bcicen/go-haproxy?status.svg)](https://godoc.org/github.com/bcicen/go-haproxy)
 
 # go-haproxy
-Go library for managing and communicating with HAProxy 
+Go library for interacting with HAProxys stats socket.
 
 ## Usage
 
@@ -12,7 +12,7 @@ client := &haproxy.HAProxyClient{
 }
 ```
 
-Fetch results for a built in command(currently supports stats and info):
+Fetch results for a built in command(currently supports `show stats` and `show info`):
 ```go
 stats, err := client.Stats()
 for _, i := range stats {
@@ -23,4 +23,5 @@ for _, i := range stats {
 Or retrieve the result body from an arbitrary command string:
 ```go
 result, err := h.RunCommand("show info")
+fmt.Println(result.String())
 ```
