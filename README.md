@@ -12,7 +12,7 @@ client := &haproxy.HAProxyClient{
 }
 ```
 
-Fetch results for a built in command(currently only supports `stats`):
+Fetch results for a built in command(currently supports stats and info):
 ```go
 stats, err := client.Stats()
 for _, i := range stats {
