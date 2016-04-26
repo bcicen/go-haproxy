@@ -28,7 +28,7 @@ func toString(in interface{}) (string, error) {
 	case reflect.Float64:
 		return strconv.FormatFloat(inValue.Float(), byte('f'), -1, 64), nil
 	}
-	return "", fmt.Errorf("No known conversion from " + inValue.Type().String() + " to string")
+	return "", fmt.Errorf("unable to cast " + inValue.Type().String() + " to string")
 }
 
 func toBool(in interface{}) (bool, error) {
@@ -66,7 +66,7 @@ func toBool(in interface{}) (bool, error) {
 		}
 		return false, nil
 	}
-	return false, fmt.Errorf("No known conversion from " + inValue.Type().String() + " to bool")
+	return false, fmt.Errorf("unable to cast " + inValue.Type().String() + " to bool")
 }
 
 func toInt(in interface{}) (int64, error) {
@@ -91,7 +91,7 @@ func toInt(in interface{}) (int64, error) {
 	case reflect.Float32, reflect.Float64:
 		return int64(inValue.Float()), nil
 	}
-	return 0, fmt.Errorf("No known conversion from " + inValue.Type().String() + " to int")
+	return 0, fmt.Errorf("unable to cast " + inValue.Type().String() + " to int")
 }
 
 func toUint(in interface{}) (uint64, error) {
@@ -104,7 +104,7 @@ func toUint(in interface{}) (uint64, error) {
 			return 0, nil
 		}
 
-		// support the float input
+		// float input
 		if strings.Contains(s, ".") {
 			f, err := strconv.ParseFloat(s, 64)
 			if err != nil {
@@ -125,7 +125,7 @@ func toUint(in interface{}) (uint64, error) {
 	case reflect.Float32, reflect.Float64:
 		return uint64(inValue.Float()), nil
 	}
-	return 0, fmt.Errorf("No known conversion from " + inValue.Type().String() + " to uint")
+	return 0, fmt.Errorf("unable to cast " + inValue.Type().String() + " to uint")
 }
 
 func toFloat(in interface{}) (float64, error) {
@@ -150,7 +150,7 @@ func toFloat(in interface{}) (float64, error) {
 	case reflect.Float32, reflect.Float64:
 		return inValue.Float(), nil
 	}
-	return 0, fmt.Errorf("No known conversion from " + inValue.Type().String() + " to float")
+	return 0, fmt.Errorf("unable to cast " + inValue.Type().String() + " to float")
 }
 
 func setField(field reflect.Value, value string) error {
