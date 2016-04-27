@@ -1,4 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/bcicen/go-haproxy?status.svg)](https://godoc.org/github.com/bcicen/go-haproxy)
+[![codebeat badge](https://codebeat.co/badges/f947c19e-0d7b-47d0-87b4-4e2e555ba806)](https://codebeat.co/projects/github-com-bcicen-go-haproxy)
 
 # go-haproxy
 Go library for interacting with HAProxys stats socket.
