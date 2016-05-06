@@ -1,11 +1,13 @@
-package haproxy
+package haproxy_test
 
 import (
 	"fmt"
+
+	"github.com/bcicen/go-haproxy"
 )
 
 func ExampleHAProxyClient_Stats() {
-	client := &HAProxyClient{
+	client := &haproxy.HAProxyClient{
 		Addr: "unix:///var/run/haproxy.sock",
 	}
 	stats, err := client.Stats()
@@ -24,7 +26,7 @@ func ExampleHAProxyClient_Stats() {
 }
 
 func ExampleHAProxyClient_Info() {
-	client := &HAProxyClient{
+	client := &haproxy.HAProxyClient{
 		Addr: "unix:///var/run/haproxy.sock",
 	}
 	info, err := client.Info()
@@ -38,7 +40,7 @@ func ExampleHAProxyClient_Info() {
 }
 
 func ExampleHAProxyClient_RunCommand() {
-	client := &HAProxyClient{
+	client := &haproxy.HAProxyClient{
 		Addr: "unix:///var/run/haproxy.sock",
 	}
 	result, err := client.RunCommand("show info")
