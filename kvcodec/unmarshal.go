@@ -113,7 +113,10 @@ func Unmarshal(in io.Reader, out interface{}) error {
 			k, v := trim(s[0]), trim(s[1])
 			if meta, ok := fields[k]; ok {
 				field := outValue.FieldByName(meta.Name)
-				setField(field, v)
+				err = setField(field, v)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
