@@ -31,12 +31,18 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	result := bytes.NewBuffer(nil)
 
 	go func() {
-		io.Copy(result, h.conn)
+		err = io.Copy(result, h.conn)
+		if err != nil {
+			return nil, err
+		}
 		defer func() { done <- true }()
 	}()
 
 	go func() {
-		h.conn.Write([]byte(cmd + "\n"))
+		err = h.conn.Write([]byte(cmd + "\n"))
+		if err != nil {
+			return nil, err
+		}
 		defer func() { done <- true }()
 	}()
 
@@ -46,7 +52,11 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 		case <-done:
 		}
 	}
-	h.conn.Close()
+
+	err = h.conn.Close()
+	if err != nil {
+		return nil, err
+	}
 
 	if strings.HasPrefix(result.String(), "Unknown command") {
 		return nil, fmt.Errorf("Unknown command: %s", cmd)

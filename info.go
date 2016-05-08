@@ -62,6 +62,9 @@ func (h *HAProxyClient) Info() (*Info, error) {
 		return nil, err
 	}
 	info := &Info{}
-	kvcodec.Unmarshal(res, info)
+	err = kvcodec.Unmarshal(res, info)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding response: %s", err)
+	}
 	return info, nil
 }
