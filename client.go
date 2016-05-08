@@ -20,6 +20,10 @@ type HAProxyClient struct {
 	conn net.Conn
 }
 
+type HAProxy interface {
+	RunCommand(cmd string) (*bytes.Buffer, error)
+}
+
 // RunCommand is the entrypoint to the client. Sends an arbitray command string to HAProxy.
 func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	err := h.dial()

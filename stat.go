@@ -8,7 +8,7 @@ import (
 )
 
 // Response from HAProxy "show stat" command.
-type Stat struct {
+type StatResponse struct {
 	PxName        string `csv:"# pxname"`
 	SvName        string `csv:"svname"`
 	Qcur          uint64 `csv:"qcur"`
@@ -74,7 +74,7 @@ type Stat struct {
 }
 
 // Equivalent to HAProxy "show stat" command.
-func (h *HAProxyClient) Stats() (stats []*Stat, err error) {
+func Stats(h HAProxy) (stats []*StatResponse, err error) {
 	res, err := h.RunCommand("show stat")
 	if err != nil {
 		return nil, err

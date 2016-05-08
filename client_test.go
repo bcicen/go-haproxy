@@ -1,52 +1,25 @@
-package haproxy_test
+package haproxy
 
 import (
-	"fmt"
-
-	"github.com/bcicen/go-haproxy"
+	"testing"
 )
 
-func ExampleHAProxyClient_Stats() {
-	client := &haproxy.HAProxyClient{
-		Addr: "unix:///var/run/haproxy.sock",
-	}
-	stats, err := client.Stats()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	for _, s := range stats {
-		fmt.Printf("%s: %s\n", s.SvName, s.Status)
-	}
-	// Output:
-	//static: DOWN
-	//app1: UP
-	//app2: UP
-	//...
-}
+// TestSchemaValidation ensures that the schema() method correctly parses Addr strings.
+func TestSchemaValidation(t *testing.T) {
+	ha := &HAProxyClient{Addr: "tcp://sys49152/"}
 
-func ExampleHAProxyClient_Info() {
-	client := &haproxy.HAProxyClient{
-		Addr: "unix:///var/run/haproxy.sock",
+	if ha.schema() != "tcp" {
+		t.Errorf("Expected 'tcp', received '%s'", ha)
 	}
-	info, err := client.Info()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("%s version %s\n", info.Name, info.Version)
-	// Output:
-	//HAProxy version 1.6.3
-}
 
-func ExampleHAProxyClient_RunCommand() {
-	client := &haproxy.HAProxyClient{
-		Addr: "unix:///var/run/haproxy.sock",
+	ha = &HAProxyClient{Addr: "unix://sys2064/"}
+	if ha.schema() != "socket" {
+		t.Errorf("Expected 'socket', received '%s'", ha)
 	}
-	result, err := client.RunCommand("show info")
-	if err != nil {
-		fmt.Println(err)
-		return
+
+	ha = &HAProxyClient{Addr: "unknown://RUN/"}
+	if ha.schema() != "" {
+		t.Errorf("Expected '', received '%s'", ha)
 	}
-	fmt.Println(result.String())
+
 }

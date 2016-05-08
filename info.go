@@ -7,7 +7,7 @@ import (
 )
 
 // Response from HAProxy "show info" command.
-type Info struct {
+type InfoResponse struct {
 	Name                       string `kv:"Name"`
 	Version                    string `kv:"Version"`
 	ReleaseDate                string `kv:"Release_date"`
@@ -59,12 +59,12 @@ type Info struct {
 }
 
 // Equivalent to HAProxy "show info" command.
-func (h *HAProxyClient) Info() (*Info, error) {
+func Info(h HAProxy) (*InfoResponse, error) {
 	res, err := h.RunCommand("show info")
 	if err != nil {
 		return nil, err
 	}
-	info := &Info{}
+	info := &InfoResponse{}
 	err = kvcodec.Unmarshal(res, info)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding response: %s", err)
