@@ -1,9 +1,12 @@
 package haproxy
 
 import (
+	"fmt"
+
 	"github.com/bcicen/go-haproxy/kvcodec"
 )
 
+// Response from HAProxy "show info" command.
 type Info struct {
 	Name                       string `kv:"Name"`
 	Version                    string `kv:"Version"`

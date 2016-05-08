@@ -15,17 +15,17 @@ const (
 	kvDelim  = ":"
 )
 
-type structFields map[string]FieldMeta
+type structFields map[string]fieldMeta
 
-type FieldMeta struct {
+type fieldMeta struct {
 	Key        string
 	Name       string
 	OmitAlways bool
 	OmitEmpty  bool
 }
 
-func newFieldMeta(field reflect.StructField) (meta FieldMeta) {
-	meta = FieldMeta{
+func newfieldMeta(field reflect.StructField) (meta fieldMeta) {
+	meta = fieldMeta{
 		Name: field.Name,
 	}
 	fieldTags := strings.Split(field.Tag.Get(tagLabel), ",")
@@ -69,7 +69,7 @@ func newStructFields(rType reflect.Type) (structFields, error) {
 
 	for i := 0; i < fieldsCount; i++ {
 		field := rType.Field(i)
-		meta := newFieldMeta(field)
+		meta := newfieldMeta(field)
 
 		if field.PkgPath != "" {
 			continue

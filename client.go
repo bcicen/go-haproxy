@@ -20,7 +20,7 @@ type HAProxyClient struct {
 	conn net.Conn
 }
 
-// Entrypoint to the client. Sends an arbitray command string to HAProxy.
+// RunCommand is the entrypoint to the client. Sends an arbitray command string to HAProxy.
 func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	err := h.dial()
 	if err != nil {
@@ -28,20 +28,21 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	}
 
 	done := make(chan bool)
+	errors := make(chan error)
 	result := bytes.NewBuffer(nil)
 
 	go func() {
-		err = io.Copy(result, h.conn)
+		_, err = io.Copy(result, h.conn)
 		if err != nil {
-			return nil, err
+			errors <- err
 		}
 		defer func() { done <- true }()
 	}()
 
 	go func() {
-		err = h.conn.Write([]byte(cmd + "\n"))
+		_, err = h.conn.Write([]byte(cmd + "\n"))
 		if err != nil {
-			return nil, err
+			errors <- err
 		}
 		defer func() { done <- true }()
 	}()
@@ -51,6 +52,10 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 		select {
 		case <-done:
 		}
+	}
+	close(errors)
+	for err = range errors {
+		return nil, err
 	}
 
 	err = h.conn.Close()

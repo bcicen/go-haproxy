@@ -7,6 +7,7 @@ import (
 	"github.com/gocarina/gocsv"
 )
 
+// Response from HAProxy "show stat" command.
 type Stat struct {
 	PxName        string `csv:"# pxname"`
 	SvName        string `csv:"svname"`
