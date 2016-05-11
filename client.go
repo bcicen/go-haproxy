@@ -27,34 +27,15 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	done := make(chan bool)
-	errors := make(chan error)
 	result := bytes.NewBuffer(nil)
 
-	go func() {
-		_, err = io.Copy(result, h.conn)
-		if err != nil {
-			errors <- err
-		}
-		defer func() { done <- true }()
-	}()
-
-	go func() {
-		_, err = h.conn.Write([]byte(cmd + "\n"))
-		if err != nil {
-			errors <- err
-		}
-		defer func() { done <- true }()
-	}()
-
-	// Wait for both io streams to close
-	for i := 0; i < 2; i++ {
-		select {
-		case <-done:
-		}
+	_, err = h.conn.Write([]byte(cmd + "\n"))
+	if err != nil {
+		return nil, err
 	}
-	close(errors)
-	for err = range errors {
+
+	_, err = io.Copy(result, h.conn)
+	if err != nil {
 		return nil, err
 	}
 
