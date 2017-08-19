@@ -7,6 +7,7 @@ import (
 	"io"
 	"net"
 	"strings"
+	"time"
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 type HAProxyClient struct {
 	Addr string
 	conn net.Conn
+	Timeout int
 }
 
 // RunCommand is the entrypoint to the client. Sends an arbitray command string to HAProxy.
@@ -52,11 +54,17 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 }
 
 func (h *HAProxyClient) dial() (err error) {
+	if h.Timeout == 0 {
+		h.Timeout = 30
+	}
+
+	timeout := time.Duration(h.Timeout)*time.Second
+
 	switch h.schema() {
 	case "socket":
-		h.conn, err = net.Dial("unix", strings.Replace(h.Addr, socketSchema, "", 1))
+		h.conn, err = net.DialTimeout("unix", strings.Replace(h.Addr, socketSchema, "", 1), timeout)
 	case "tcp":
-		h.conn, err = net.Dial("tcp", strings.Replace(h.Addr, tcpSchema, "", 1))
+		h.conn, err = net.DialTimeout("tcp", strings.Replace(h.Addr, tcpSchema, "", 1), timeout)
 	default:
 		return fmt.Errorf("unknown schema")
 	}
