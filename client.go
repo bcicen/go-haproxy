@@ -17,9 +17,9 @@ const (
 
 // HAProxyClient is the main structure of the library.
 type HAProxyClient struct {
-	Addr string
-	conn net.Conn
+	Addr    string
 	Timeout int
+	conn    net.Conn
 }
 
 // RunCommand is the entrypoint to the client. Sends an arbitray command string to HAProxy.
@@ -58,7 +58,7 @@ func (h *HAProxyClient) dial() (err error) {
 		h.Timeout = 30
 	}
 
-	timeout := time.Duration(h.Timeout)*time.Second
+	timeout := time.Duration(h.Timeout) * time.Second
 
 	switch h.schema() {
 	case "socket":
