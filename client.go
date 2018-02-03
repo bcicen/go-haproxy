@@ -33,11 +33,13 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 
 	_, err = h.conn.Write([]byte(cmd + "\n"))
 	if err != nil {
+		h.conn.Close()
 		return nil, err
 	}
 
 	_, err = io.Copy(result, h.conn)
 	if err != nil {
+		h.conn.Close()
 		return nil, err
 	}
 
