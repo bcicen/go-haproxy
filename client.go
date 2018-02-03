@@ -28,22 +28,16 @@ func (h *HAProxyClient) RunCommand(cmd string) (*bytes.Buffer, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer h.conn.Close()
 
 	result := bytes.NewBuffer(nil)
 
 	_, err = h.conn.Write([]byte(cmd + "\n"))
 	if err != nil {
-		h.conn.Close()
 		return nil, err
 	}
 
 	_, err = io.Copy(result, h.conn)
-	if err != nil {
-		h.conn.Close()
-		return nil, err
-	}
-
-	err = h.conn.Close()
 	if err != nil {
 		return nil, err
 	}
