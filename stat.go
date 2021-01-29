@@ -71,6 +71,43 @@ type Stat struct {
 	Ctime         uint64 `csv:"ctime"`
 	Rtime         uint64 `csv:"rtime"`
 	Ttime         uint64 `csv:"ttime"`
+	AgentStatus   uint64 `csv:"agent_status"`
+	AgentCode     uint64 `csv:"agent_code"`
+	AgentDuration uint64 `csv:"agent_duration"`
+	CheckDesc     uint64 `csv:"check_desc"`
+	AgentDesc     uint64 `csv:"agent_desc"`
+	CheckRise     uint64 `csv:"check_rise"`
+	CheckFall     uint64 `csv:"check_fall"`
+	CheckHealth   uint64 `csv:"check_health"`
+	AgentRise     uint64 `csv:"agent_rise"`
+	AgentFall     uint64 `csv:"agent_fall"`
+	AgentHealth   uint64 `csv:"agent_health"`
+	Addr          string `csv:"addr"`
+	Cookie        uint64 `csv:"cookie"`
+	Mode          string `csv:"mode"`
+	Algo          string `csv:"algo"`
+	ConnRate      uint64 `csv:"conn_rate"`
+	ConnRateMax   uint64 `csv:"conn_rate_max"`
+	ConnTot       uint64 `csv:"conn_tot"`
+	Intercepted   uint64 `csv:"intercepted"`
+	Dcon          uint64 `csv:"dcon"`
+	Dses          uint64 `csv:"dses"`
+	Wrew          uint64 `csv:"wrew"`
+	Connect       uint64 `csv:"connect"`
+	Reuse         uint64 `csv:"reuse"`
+	CacheLookups  uint64 `csv:"cache_lookups"`
+	CacheHits     uint64 `csv:"cache_hits"`
+	SrvIcur       uint64 `csv:"srv_icur"`
+	SrcIlim       uint64 `csv:"src_ilim"`
+	QtimeMax      uint64 `csv:"qtime_max"`
+	CtimeMax      uint64 `csv:"ctime_max"`
+	RtimeMax      uint64 `csv:"rtime_max"`
+	TtimeMax      uint64 `csv:"ttime_max"`
+	Eint          uint64 `csv:"eint"`
+	IdleConnCur   uint64 `csv:"idle_conn_cur"`
+	SafeConnCur   uint64 `csv:"safe_conn_cur"`
+	UsedConnCur   uint64 `csv:"used_conn_cur"`
+	NeedConnEst   uint64 `csv:"need_conn_est"`
 }
 
 // Equivalent to HAProxy "show stat" command.

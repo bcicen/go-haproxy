@@ -11,12 +11,16 @@ type Info struct {
 	Name                       string `kv:"Name"`
 	Version                    string `kv:"Version"`
 	ReleaseDate                string `kv:"Release_date"`
+	Nbthread                   uint64 `kv:"Nbthread"`
 	Nbproc                     uint64 `kv:"Nbproc"`
 	ProcessNum                 uint64 `kv:"Process_num"`
 	Pid                        uint64 `kv:"Pid"`
 	Uptime                     string `kv:"Uptime"`
 	UptimeSec                  uint64 `kv:"Uptime_sec"`
 	MemMaxMB                   uint64 `kv:"Memmax_MB"`
+	PoolAllocMB                uint64 `kv:"PoolAlloc_MB"`
+	PoolUsedMB                 uint64 `kv:"PoolUsed_MB"`
+	PoolFailed                 uint64 `kv:"PoolFailed"`
 	UlimitN                    uint64 `kv:"Ulimit-n"`
 	Maxsock                    uint64 `kv:"Maxsock"`
 	Maxconn                    uint64 `kv:"Maxconn"`
@@ -49,13 +53,24 @@ type Info struct {
 	CompressBpsIn              uint64 `kv:"CompressBpsIn"`
 	CompressBpsOut             uint64 `kv:"CompressBpsOut"`
 	CompressBpsRateLim         uint64 `kv:"CompressBpsRateLim"`
-	ZlibMemUsage               uint64 `kv:"ZlibMemUsage"`
-	MaxZlibMemUsage            uint64 `kv:"MaxZlibMemUsage"`
-	Tasks                      uint64 `kv:"Tasks"`
-	RunQueue                   uint64 `kv:"Run_queue"`
-	IdlePct                    uint64 `kv:"Idle_pct"`
-	Node                       string `kv:"node"`
-	Description                string `kv:"description"`
+	//ZlibMemUsage               uint64 `kv:"ZlibMemUsage"`
+	//MaxZlibMemUsage            uint64 `kv:"MaxZlibMemUsage"`
+	Tasks               uint64 `kv:"Tasks"`
+	RunQueue            uint64 `kv:"Run_queue"`
+	IdlePct             uint64 `kv:"Idle_pct"`
+	Node                string `kv:"node"`
+	Stopping            uint64 `kv:"Stopping"`
+	Jobs                uint64 `kv:"Jobs"`
+	UnstoppableJobs     uint64 `kv:"Unstoppable Jobs"`
+	Listeners           uint64 `kv:"Listeners"`
+	ActivePeers         uint64 `kv:"ActivePeers"`
+	ConnectedPeers      uint64 `kv:"ConnectedPeers"`
+	DroppedLogs         uint64 `kv:"DroppedLogs"`
+	BusyPolling         uint64 `kv:"BusyPolling"`
+	FailedResolutions   uint64 `kv:"FailedResolutions"`
+	TotalBytesOut       uint64 `kv:"TotalBytesOut"`
+	BytesOutRate        uint64 `kv:"BytesOutRate"`
+	DebugCommandsIssued uint64 `kv:"DebugCommandsIssued"`
 }
 
 // Equivalent to HAProxy "show info" command.
