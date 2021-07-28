@@ -74,8 +74,8 @@ type Stat struct {
 	AgentStatus   uint64 `csv:"agent_status"`
 	AgentCode     uint64 `csv:"agent_code"`
 	AgentDuration uint64 `csv:"agent_duration"`
-	CheckDesc     uint64 `csv:"check_desc"`
-	AgentDesc     uint64 `csv:"agent_desc"`
+	CheckDesc     string `csv:"check_desc"`
+	AgentDesc     string `csv:"agent_desc"`
 	CheckRise     uint64 `csv:"check_rise"`
 	CheckFall     uint64 `csv:"check_fall"`
 	CheckHealth   uint64 `csv:"check_health"`
