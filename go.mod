@@ -1,4 +1,4 @@
-module github.com/bcicen/go-haproxy
+module github.com/vponomarev/go-haproxy
 
 go 1.16
 
