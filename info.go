@@ -7,6 +7,9 @@ import (
 )
 
 // Response from HAProxy "show info" command.
+//
+// See HAProxy source code src/stats.c check for stat_cols_info variable
+// definition.
 type Info struct {
 	Name                       string `kv:"Name"`
 	Version                    string `kv:"Version"`
@@ -53,24 +56,38 @@ type Info struct {
 	CompressBpsIn              uint64 `kv:"CompressBpsIn"`
 	CompressBpsOut             uint64 `kv:"CompressBpsOut"`
 	CompressBpsRateLim         uint64 `kv:"CompressBpsRateLim"`
-	//ZlibMemUsage               uint64 `kv:"ZlibMemUsage"`
-	//MaxZlibMemUsage            uint64 `kv:"MaxZlibMemUsage"`
-	Tasks               uint64 `kv:"Tasks"`
-	RunQueue            uint64 `kv:"Run_queue"`
-	IdlePct             uint64 `kv:"Idle_pct"`
-	Node                string `kv:"node"`
-	Stopping            uint64 `kv:"Stopping"`
-	Jobs                uint64 `kv:"Jobs"`
-	UnstoppableJobs     uint64 `kv:"Unstoppable Jobs"`
-	Listeners           uint64 `kv:"Listeners"`
-	ActivePeers         uint64 `kv:"ActivePeers"`
-	ConnectedPeers      uint64 `kv:"ConnectedPeers"`
-	DroppedLogs         uint64 `kv:"DroppedLogs"`
-	BusyPolling         uint64 `kv:"BusyPolling"`
-	FailedResolutions   uint64 `kv:"FailedResolutions"`
-	TotalBytesOut       uint64 `kv:"TotalBytesOut"`
-	BytesOutRate        uint64 `kv:"BytesOutRate"`
-	DebugCommandsIssued uint64 `kv:"DebugCommandsIssued"`
+	ZlibMemUsage               uint64 `kv:"ZlibMemUsage"`
+	MaxZlibMemUsage            uint64 `kv:"MaxZlibMemUsage"`
+	Tasks                      uint64 `kv:"Tasks"`
+	RunQueue                   uint64 `kv:"Run_queue"`
+	IdlePct                    uint64 `kv:"Idle_pct"`
+	Node                       string `kv:"node"`
+	Stopping                   uint64 `kv:"Stopping"`
+	Jobs                       uint64 `kv:"Jobs"`
+	UnstoppableJobs            uint64 `kv:"Unstoppable Jobs"`
+	Listeners                  uint64 `kv:"Listeners"`
+	ActivePeers                uint64 `kv:"ActivePeers"`
+	ConnectedPeers             uint64 `kv:"ConnectedPeers"`
+	DroppedLogs                uint64 `kv:"DroppedLogs"`
+	BusyPolling                uint64 `kv:"BusyPolling"`
+	FailedResolutions          uint64 `kv:"FailedResolutions"`
+	TotalBytesOut              uint64 `kv:"TotalBytesOut"`
+	BytesOutRate               uint64 `kv:"BytesOutRate"`
+	DebugCommandsIssued        uint64 `kv:"DebugCommandsIssued"`
+	CumRecvLogs                uint64 `kv:"CumRecvLogs"`
+	BuildInfo                  string `kv:"Build info"`
+	MemmaxBytes                uint64 `kv:"Memmax_bytes"`
+	PoolAllocBytes             uint64 `kv:"PoolAlloc_bytes"`
+	PoolUsedBytes              uint64 `kv:"PoolUsed_bytes"`
+	StartTimeSec               uint64 `kv:"Start_time_sec"`
+	Tainted                    uint64 `kv:"Tainted"`
+	TotalWarnings              uint64 `kv:"TotalWarnings"`
+	MaxconnReached             uint64 `kv:"MaxconnReached"`
+	BootTimeMs                 uint64 `kv:"BootTime_ms"`
+	NicedTasks                 uint64 `kv:"Niced_tasks"`
+	CurrStreams                uint64 `kv:"CurrStreams"`
+	CumStreams                 uint64 `kv:"CumStreams"`
+	BlockedTrafficWarnings     uint64 `kv:"BlockedTrafficWarnings"`
 }
 
 // Equivalent to HAProxy "show info" command.
